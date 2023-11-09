@@ -102,6 +102,7 @@ public class BlockChain {
   } // getHash()
 
   /*
+   *
    * Walks the blockchain and ensures that its blocks are consistent and valid
    */
   public boolean isValidBlockChain() {
