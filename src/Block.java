@@ -1,3 +1,4 @@
+package src;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -51,16 +52,17 @@ public class Block {
     long tempNonce = -1;
     MessageDigest md = MessageDigest.getInstance("sha-256");
 
-    while (!(this.curHash.isValid())) {
+    do {
       tempNonce++;
       md.update(ByteBuffer.allocate(8).putInt(this.num).array());
       md.update(ByteBuffer.allocate(8).putInt(this.amount).array());
       if (prevHash != null) {
-        md.update(prevHash.data);
+        md.update(prevHash.getData());
       } // if
       md.update(ByteBuffer.allocate(8).putLong(tempNonce).array());
       this.curHash = new Hash(md.digest());
-    } // while
+      this.nonce = tempNonce;
+    }  while (!(this.curHash.isValid()));
 
   } // Block(int newNum, int newAmount, Hash previousHash)
 
@@ -80,8 +82,9 @@ public class Block {
     md.update(ByteBuffer.allocate(8).putInt(this.amount).array());
 
     if (prevHash != null) {
-      md.update(prevHash.data);
+      md.update(prevHash.getData());
     } // if
+
 
     md.update(ByteBuffer.allocate(8).putLong(this.nonce).array());
     this.curHash = new Hash(md.digest());
@@ -132,7 +135,7 @@ public class Block {
    */
   public String toString() {
     return ("Block " + this.num + " (Amount: " + this.amount + ", Nonce: " + this.nonce
-        + ", prevHash: " + this.prevHash + ", hash" + this.curHash);
+        + ", prevHash: " + this.prevHash + ", hash: " + this.curHash);
   } // toString
 
   /*
