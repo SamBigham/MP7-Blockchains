@@ -24,7 +24,7 @@ public class Hash {
 
     for(byte temp : this.data){
       Byte.toUnsignedInt(temp);
-      holder = String.format(holder + "%s" ,temp);
+      holder = holder.concat(String.format("%02X", temp));
     }
     return holder;
   }
