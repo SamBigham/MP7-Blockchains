@@ -12,14 +12,15 @@ public class BlockChain {
   int initial;
 
   /*
-   * The BlockChain that will be used in the contructor
-   */
-  Block curBlock;
-
-  /*
    * The dummy node at the front of the list
    */
   Node front;
+
+  /*
+   * The last node in the block chain
+   */
+  Node curNode;
+
 
   // +--------------+------------------------------------------------
   // | Constructors |
@@ -31,10 +32,10 @@ public class BlockChain {
    * own nonce and hash
    */
   public BlockChain(int initial) throws NoSuchAlgorithmException {
-    Block curBlock = new Block(0, initial, null);
+    Block firstBlock = new Block(0, initial, null);
 
-    this.front = new Node(null, null);
-    this.front.data = curBlock;
+    this.front = new Node(firstBlock, null);
+    this.curNode = this.front;
   } // BlockChain(int initial)
 
   // +----------------+----------------------------------------------
@@ -42,15 +43,14 @@ public class BlockChain {
   // +----------------+
 
   /*
-   * mines a new candidate block to be added to the end of the chain. The returned Block should be
+   * Mines a new candidate block to be added to the end of the chain. The returned Block should be
    * valid to add onto this chain.
    */
   Block mine(int amount) throws NoSuchAlgorithmException {
-    // STUB
-    byte[] temp = new byte[10];
-    Hash temp2 = new Hash(temp);
-    Block result = new Block(0, 0, temp2);
-    return result;
+    Block newBlock =
+        new Block(this.curNode.data.getNum() + 1, amount, this.curNode.data.getPrevHash());
+
+    return newBlock;
   } // mine(int amount)
 
   /*
@@ -58,7 +58,7 @@ public class BlockChain {
    * for quickly determining the size of the chain.
    */
   public int getSize() {
-    return this.curBlock.getNum() + 1;
+    return this.curNode.data.getNum() + 1;
   } // getSize()
 
   /*
@@ -66,7 +66,8 @@ public class BlockChain {
    * to the chain (because it is invalid wrt the rest of the blocks).
    */
   public void append(Block blk) throws IllegalArgumentException {
-    // STUB
+    this.curNode.next = new Node(blk, null);
+    this.curNode = this.curNode.next;
   } // append(Block blk)
 
   /*
@@ -74,17 +75,30 @@ public class BlockChain {
    * block, then removeLast does nothing and returns false.
    */
   public boolean removeLast() {
-    // STUB
-    return false;
+    if (this.getSize() <= 1) {
+      return false;
+    } else {
+      Node temp = this.curNode;
+      this.curNode = this.front;
+
+      for (int i = 0; i < this.getSize(); i++) {
+        if (this.curNode.next == temp) {
+          this.curNode.next = null;
+          return true;
+        } else {
+          this.curNode = this.curNode.next;
+        } // if... else
+      } // for
+    } // if... else
+
+    return true;
   } // removeLast()
 
   /*
    * Returns the hash of the last block in the chain
    */
   public Hash getHash() {
-    // STUB
-    byte[] temp = new byte[10];
-    return new Hash(temp);
+    return this.curNode.data.getHash();
   } // getHash()
 
   /*
@@ -141,4 +155,5 @@ public class BlockChain {
     } // Node(Block data, Node next)
 
   } // Node
+
 } // Blockchain

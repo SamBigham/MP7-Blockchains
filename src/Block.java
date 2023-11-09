@@ -10,10 +10,29 @@ public class Block {
   // | Fields |
   // +--------+
 
+  /*
+   * The number of the block
+   */
   int num;
+
+  /*
+   * The amount transferred in the block
+   */
   int amount;
+
+  /*
+   * The nonce calculated after mining
+   */
   long nonce;
+
+  /*
+   * The previous Hash
+   */
   Hash prevHash;
+
+  /* 
+   * The current Hash
+   */
   Hash curHash;
 
   // +--------------+------------------------------------------------
@@ -38,10 +57,10 @@ public class Block {
       md.update(ByteBuffer.allocate(8).putInt(this.amount).array());
       if (prevHash != null) {
         md.update(prevHash.data);
-      }
+      } // if
       md.update(ByteBuffer.allocate(8).putLong(tempNonce).array());
       this.curHash = new Hash(md.digest());
-    }
+    } // while
 
   } // Block(int newNum, int newAmount, Hash previousHash)
 
@@ -62,7 +81,7 @@ public class Block {
 
     if (prevHash != null) {
       md.update(prevHash.data);
-    }
+    } // if
 
     md.update(ByteBuffer.allocate(8).putLong(this.nonce).array());
     this.curHash = new Hash(md.digest());
