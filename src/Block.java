@@ -29,10 +29,16 @@ public class Block {
     this.prevHash = prevHash;
   } // Block(int newNum, int newAmount, Hash previousHash)
 
+  /*
+   * Creates a new block from the specified parameters, using the provided nonce and additional
+   * parameters to generate the hash for the block. Because the nonce is provided, this constructor
+   * does not need to perform the mining operation; it can compute the hash directly.
+   */
   public Block(int num, int amount, Hash prevHash, long nonce) {
     this.num = num;
     this.amount = amount;
     this.prevHash = prevHash;
+    this.nonce = nonce;
   } // Block(int num, int amount, Hash prevHash, long nonce)
 
   // +----------------+----------------------------------------------
