@@ -1,3 +1,4 @@
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;
@@ -27,6 +28,21 @@ public class Block {
     this.num = num;
     this.amount = amount;
     this.prevHash = prevHash;
+
+    long tempNonce = -1;
+    MessageDigest md = MessageDigest.getInstance("sha-256");
+
+    while (!(this.curHash.isValid())) {
+      tempNonce++;
+      md.update(ByteBuffer.allocate(8).putInt(this.num).array());
+      md.update(ByteBuffer.allocate(8).putInt(this.amount).array());
+      if (prevHash != null) {
+        md.update(prevHash.data);
+      }
+      md.update(ByteBuffer.allocate(8).putLong(tempNonce).array());
+      this.curHash = new Hash(md.digest());
+    }
+
   } // Block(int newNum, int newAmount, Hash previousHash)
 
   /*
@@ -34,11 +50,23 @@ public class Block {
    * parameters to generate the hash for the block. Because the nonce is provided, this constructor
    * does not need to perform the mining operation; it can compute the hash directly.
    */
-  public Block(int num, int amount, Hash prevHash, long nonce) {
+  public Block(int num, int amount, Hash prevHash, long nonce) throws NoSuchAlgorithmException {
+    MessageDigest md = MessageDigest.getInstance("sha-256");
     this.num = num;
     this.amount = amount;
     this.prevHash = prevHash;
     this.nonce = nonce;
+
+    md.update(ByteBuffer.allocate(8).putInt(this.num).array());
+    md.update(ByteBuffer.allocate(8).putInt(this.amount).array());
+
+    if (prevHash != null) {
+      md.update(prevHash.data);
+    }
+
+    md.update(ByteBuffer.allocate(8).putLong(this.nonce).array());
+    this.curHash = new Hash(md.digest());
+
   } // Block(int num, int amount, Hash prevHash, long nonce)
 
   // +----------------+----------------------------------------------
