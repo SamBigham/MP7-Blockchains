@@ -1,5 +1,5 @@
+package src;
 import java.security.NoSuchAlgorithmException;
-
 public class BlockChain {
 
   // +--------+------------------------------------------------------
