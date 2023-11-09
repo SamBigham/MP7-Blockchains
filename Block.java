@@ -1,3 +1,4 @@
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.MessageDigest;
@@ -14,16 +15,41 @@ public class Block {
 
 
   public Block(int newNum, int newAmount, Hash previousHash)throws NoSuchAlgorithmException{
+    long tempNonce = -1;
     MessageDigest md = MessageDigest.getInstance("sha-256");
+    
+
+    while (!(this.curHash.isValid())){
+        tempNonce++;
+        md.update(ByteBuffer.allocate(8).putInt(this.num).array());
+        md.update(ByteBuffer.allocate(8).putInt(this.amount).array());
+        if(prevHash != null){
+          md.update(prevHash.data);
+        }
+        md.update(ByteBuffer.allocate(8).putLong(tempNonce).array());
+        this.curHash = new Hash(md.digest());
+    }
   }
 
+  public Block(int newNum, int newAmount, Hash previousHash, long newNonce) throws NoSuchAlgorithmException{
+    MessageDigest md = MessageDigest.getInstance("sha-256");
+    
+    this.num = newNum;
+    this.amount = newAmount;
+    this.prevHash = previousHash;
+    this.nonce = newNonce;
+
+    md.update(ByteBuffer.allocate(8).putInt(this.num).array());
+    md.update(ByteBuffer.allocate(8).putInt(this.amount).array());
+    if(prevHash != null){
+        md.update(prevHash.data);
+    }
+    md.update(ByteBuffer.allocate(8).putLong(this.nonce).array());
+    this.curHash = new Hash(md.digest());
 
 
-public static byte[] calculateHash(String msg) throws NoSuchAlgorithmException {
-  MessageDigest md = MessageDigest.getInstance("sha-256");
-  md.update(msg.getBytes());
-  
-} // calculateHash(String)
+  }
+
 
 
   public int getNum() {
