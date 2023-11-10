@@ -2,9 +2,6 @@ package src;
 
 import java.io.PrintWriter;
 import java.util.Scanner;
-
-import BlockChain;
-
 import java.security.NoSuchAlgorithmException;
 
 public class BlockChainDriver {
